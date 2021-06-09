@@ -13,48 +13,49 @@ export default class AttendanceModel {
         if (!AttendanceModel.instance) {
             AttendanceModel.instance = new AttendanceModel();
         }
+        this.instance.getDataLocal();
         return AttendanceModel.instance;
     }
     public keyData = "AttendanceModel";
     public lastDateAttendance = "0";
 
-    public DAY_1: {
+    public DAY_1 = {
         idAttendance: 1,
         tileItem: "Ngày 1",
         countAmount: 1000,
         statusAttendance: 1
     }
-    public DAY_2: {
+    public DAY_2 = {
         idAttendance: 2,
         tileItem: "Ngày 2",
         countAmount: 1000,
         statusAttendance: 1
     }
-    public DAY_3: {
+    public DAY_3 = {
         idAttendance: 3,
         tileItem: "Ngày 3",
         countAmount: 1000,
         statusAttendance: 1
     }
-    public DAY_4: {
+    public DAY_4 = {
         idAttendance: 4,
         tileItem: "Ngày 4",
         countAmount: 1000,
         statusAttendance: 1
     }
-    public DAY_5: {
+    public DAY_5 = {
         idAttendance: 5,
         tileItem: "Ngày 5",
         countAmount: 1000,
         statusAttendance: 1
     }
-    public DAY_6: {
+    public DAY_6 = {
         idAttendance: 6,
         tileItem: "Ngày 6",
         countAmount: 1000,
         statusAttendance: 1
     }
-    public DAY_7: {
+    public DAY_7 = {
         idAttendance: 7,
         tileItem: "Ngày 7",
         countAmount: 1000,
@@ -75,12 +76,61 @@ export default class AttendanceModel {
         }
         return data;
     }
+    public canAttendance() {
+        let data = this.getAllData();
+        let check = false;
+        if (data && data.listAttendance) {
+            data.listAttendance.forEach((element, pos) => {
+                if (element.statusAttendance == 2 || element.statusAttendance == 3) {
+                    check = true;
+                }
+            });
+        }
+        return check;
+    }
+    public getTime() {
+        let date = new Date();
+        let keyTime = date.getFullYear() + "" + date.getMonth() + "" + date.getDate();
+        return keyTime;
+    }
+    public caculatorAttendance() {
+        let data = this.getAllData();
+        let keyPos = 0;
+        if (data && data.listAttendance) {
+            data.listAttendance.forEach((element, pos) => {
+                if (element.statusAttendance == 3) {
+                    if (keyPos == 0) {
+                        keyPos = pos;
+                    }
+                }
+            });
+        }
+        if (Number(this.lastDateAttendance) != 0 && Number(this.getTime()) > Number(this.lastDateAttendance)) {
+            if (keyPos != 0) {
+                data.listAttendance[keyPos].statusAttendance = 2;
+                this.saveData();
+            }
+        }
+
+    }
+    public attendance(itemAtendance) {
+        let data = this.getAllData();
+        if (data && data.listAttendance) {
+            data.listAttendance.forEach(element => {
+                if (element.idAttendance == itemAtendance.idAttendance) {
+                    element.statusAttendance = 1;
+                    this.lastDateAttendance = this.getTime();
+                    this.saveData();
+                }
+            });
+        }
+    }
     public saveData() {
         DataOffline.saveData(this.keyData, this.getAllData());
     }
     public getDataLocal() {
         let data = DataOffline.readData(this.keyData);
-        if (data != null) {
+        if (data && data != null) {
             this.lastDateAttendance = data.lastDateAttendance;
             data.listAttendance.forEach(element => {
                 switch (element.idAttendance) {
@@ -117,43 +167,44 @@ export default class AttendanceModel {
             idAttendance: 1,
             tileItem: "Ngày 1",
             countAmount: 1000,
-            statusAttendance: 1
+            statusAttendance: 2
         }
         this.DAY_2 = {
             idAttendance: 2,
             tileItem: "Ngày 2",
-            countAmount: 1000,
-            statusAttendance: 1
+            countAmount: 1500,
+            statusAttendance: 3
         }
         this.DAY_3 = {
             idAttendance: 3,
             tileItem: "Ngày 3",
-            countAmount: 1000,
-            statusAttendance: 1
+            countAmount: 3000,
+            statusAttendance: 3
         }
         this.DAY_4 = {
             idAttendance: 4,
             tileItem: "Ngày 4",
-            countAmount: 1000,
-            statusAttendance: 1
+            countAmount: 5000,
+            statusAttendance: 3
         }
         this.DAY_5 = {
             idAttendance: 5,
             tileItem: "Ngày 5",
-            countAmount: 1000,
-            statusAttendance: 1
+            countAmount: 10000,
+            statusAttendance: 3
         }
         this.DAY_6 = {
             idAttendance: 6,
             tileItem: "Ngày 6",
-            countAmount: 1000,
-            statusAttendance: 1
+            countAmount: 15000,
+            statusAttendance: 3
         }
         this.DAY_7 = {
             idAttendance: 7,
             tileItem: "Ngày 7",
-            countAmount: 1000,
-            statusAttendance: 1
+            countAmount: 25000,
+            statusAttendance: 3
         }
+        this.saveData();
     }
 }

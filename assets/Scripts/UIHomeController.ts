@@ -1,9 +1,4 @@
-// Learn TypeScript:
-//  - https://docs.cocos.com/creator/manual/en/scripting/typescript.html
-// Learn Attribute:
-//  - https://docs.cocos.com/creator/manual/en/scripting/reference/attributes.html
-// Learn life-cycle callbacks:
-//  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
+import PlayerModel from "./PlayerData/PlayerModel";
 
 const {ccclass, property} = cc._decorator;
 
@@ -11,18 +6,20 @@ const {ccclass, property} = cc._decorator;
 export default class NewClass extends cc.Component {
 
     @property(cc.Label)
-    label: cc.Label = null;
+    countCoin: cc.Label = null;
 
-    @property
-    text: string = 'hello';
+    playerModel: PlayerModel = null;
 
-    // LIFE-CYCLE CALLBACKS:
-
-    // onLoad () {}
-
-    start () {
-
+    onEnable(){
+        this.playerModel = PlayerModel.getInstance();
+        this.node.on('attendance', this.updateCoin, this);
+        this.renderUI();
     }
-
-    // update (dt) {}
+    renderUI(){
+        this.playerModel.getAllData();
+        this.countCoin.string = this.playerModel.coint + "";
+    }
+    updateCoin(){
+        this.countCoin.string = this.playerModel.coint + "";
+    }
 }
